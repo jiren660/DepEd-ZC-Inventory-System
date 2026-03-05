@@ -2,12 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegistrationController;
 
-// Login and Landing Page
-Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
+// Login Page
+Route::get('/', [AuthController::class, 'showLoginForm'])->name('login.form');
 
 // Process Login Attempt
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+// Process Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Display Registration Page
 Route::get('/register', function () {
@@ -15,17 +19,23 @@ Route::get('/register', function () {
 })->name('register');
 
 // Process Registration Form
-Route::post('/register', function () {
-    // Logic for saving users or sending approval requests
-    return back(); 
-})->name('register.post'); 
+Route::post('/register', [RegistrationController::class, 'register'])->name('register.post');
 
-// Dashboard Route (Protected by Auth Middleware)
-Route::get('/dashboard', function() {
-    return view('dashboard');
-})->name('dashboard')->middleware('auth');
+// Admin Verification (Accept/Reject/Block from email link)
+Route::get('/verify', [RegistrationController::class, 'verify'])->name('verify');
 
-// Redirect /login to root
+// OTP Email Verification (AJAX)
+Route::post('/otp/send', [RegistrationController::class, 'sendOtp'])->name('otp.send');
+Route::post('/otp/verify', [RegistrationController::class, 'verifyOtp'])->name('otp.verify');
+
+// Dashboard and Protected Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function() {
+        return view('dashboard');
+    })->name('dashboard');
+});
+
+// Redirect /login GET to root
 Route::get('/login', function() {
     return redirect('/');
 });

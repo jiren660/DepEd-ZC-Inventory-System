@@ -21,14 +21,35 @@ class AuthController extends Controller
             'email' => 'required|email'
         ]);
 
-        $user = User::where('email', $request->email)->where('approved', 1)->first();
+        $email = strtolower(trim($request->email));
 
-        if($user){
-            // Log the user in automatically without password
+        $user = User::where('email', $email)->where('approved', 1)->first();
+
+        if ($user) {
             Auth::login($user);
             return redirect('/dashboard');
         }
 
-        return back()->with('error', 'Email not found or account not approved.');
+        // Check if pending approval
+        if (\App\Models\PendingRegistration::where('email', $email)->exists()) {
+            return back()->with('error', 'Your registration is still pending admin approval.');
+        }
+
+        // Check if blocked
+        if (\App\Models\BlockedAccount::where('email', $email)->exists()) {
+            return back()->with('error', 'This email has been blocked from accessing the system.');
+        }
+
+        return back()->with('error', 'This account is not registered. Please register first.');
+    }
+
+    // Handle logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }
