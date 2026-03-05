@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\DashboardController;
 
 // Login Page
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -30,9 +31,10 @@ Route::post('/otp/verify', [RegistrationController::class, 'verifyOtp'])->name('
 
 // Dashboard and Protected Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function() {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/inventory-setup', function () {
+        return view('inventory-setup');
+    })->name('inventory.setup');
 });
 
 // Redirect /login GET to root
