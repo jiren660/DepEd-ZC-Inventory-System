@@ -1,0 +1,140 @@
+# DepEd ZC Inventory System — Front-End Design Analysis
+
+Complete analysis of the dashboard's design system, theme, page flow, and animations.
+
+---
+
+## 📸 Visual Overview
+
+````carousel
+![Dashboard Overview](C:\Users\Arween\.gemini\antigravity\brain\53d4f13c-0f2a-43cc-ba30-ee346c9aaa91\dashboard_overview_1772757745426.png)
+<!-- slide -->
+![Inventory Setup — Step 1](C:\Users\Arween\.gemini\antigravity\brain\53d4f13c-0f2a-43cc-ba30-ee346c9aaa91\inventory_setup_page_1772757766716.png)
+<!-- slide -->
+![Inventory Setup — Step 2: Category](C:\Users\Arween\.gemini\antigravity\brain\53d4f13c-0f2a-43cc-ba30-ee346c9aaa91\add_new_category_step2_1772757780666.png)
+<!-- slide -->
+![Inventory Setup — Step 3: Form](C:\Users\Arween\.gemini\antigravity\brain\53d4f13c-0f2a-43cc-ba30-ee346c9aaa91\create_new_school_form_1772757792439.png)
+````
+
+---
+
+## 🎨 Design System & Theme
+
+| Property | Value |
+|---|---|
+| **Font** | `Plus Jakarta Sans` (Google Fonts) — weights 400–800 |
+| **CSS Framework** | Tailwind CSS (CDN) |
+| **Background** | `bg-slate-50` (#f8fafc) — light icy grey |
+| **Primary Accent** | `#c00000` — DepEd Red (buttons, active sidebar, badges) |
+| **Secondary Accents** | Blue (#3b82f6), Emerald (#10b981), Orange (#f97316) |
+| **Text** | Slate-800 primary, Slate-400/500 secondary |
+| **Border Radius** | Extremely rounded: `rounded-[2.5rem]` / `rounded-[3rem]` cards |
+| **Shadow Style** | `shadow-xl shadow-slate-200/50` — soft, diffused |
+| **Typography Style** | `font-extrabold`, `tracking-tight`, `italic` accents, `uppercase tracking-widest` labels |
+
+### Color Coding by Section
+- **Legislative District 1** → Blue (`text-blue-600`, `bg-blue-50`)
+- **Legislative District 2** → Emerald (`text-emerald-600`, `bg-emerald-50`)
+- **Serviceable assets** → Emerald
+- **Unserviceable assets** → Orange
+- **Primary actions** → DepEd Red `#c00000`
+
+---
+
+## 🏗️ Layout Structure
+
+### Dashboard (`/dashboard`)
+Two-column layout:
+
+| Section | Description |
+|---|---|
+| **Sidebar** (fixed, 288px) | Logo + nav + user profile with logout |
+| **Main Content** (scrollable) | Header → Stats Cards → Quick Entry → District Portfolio |
+
+**Sidebar sections:**
+1. **Brand** — DepEd logo + "DepEd ZC" + "Asset Management" subtitle
+2. **Dashboard** link (active state: red bg, bold)
+3. **Configuration** — Inventory Setup link
+4. **LD 1** — Quadrant 1.1 (3 Dist), Quadrant 1.2 (2 Dist)
+5. **LD 2** — Quadrant 2.1 (3 Dist), Quadrant 2.2 (4 Dist)
+6. **User Profile** — Avatar initial + email + "Admin" badge + logout button
+
+**Main content sections:**
+1. **Header** — "Welcome, Admin!" + date card (top-right)
+2. **3 Stat Cards** — Total Assets / Good Condition / Pasira/Damaged
+3. **Quick Asset Entry** — Inline form with search bar, dropdowns, and ➕ button
+4. **District Summary Portfolio** — 4 quadrant cards in a 2×2 grid
+
+### Inventory Setup (`/inventory-setup`)
+Single-column, centered wizard with **3 steps**:
+- **Step 1:** Action picker (Add New / Edit-Update) — 2 big cards
+- **Step 2:** Category picker (Schools / Districts / Items) — 3 cards in a row
+- **Step 3:** Dynamic form rendered via JavaScript based on selection
+
+### Auth Pages (`/` login, `/register`)
+Centered card layout on a radial gradient background (`circle at top right, #ffffff, #f1f5f9`):
+- Red accent bar at top of card (`h-1.5 bg-deped-red`)
+- Footer bar: "Division of Zamboanga City • Inventory 1.0"
+- Registration includes **OTP verification flow** via Alpine.js
+
+---
+
+## ✨ Animations & Transitions
+
+| Animation | Where Used | CSS |
+|---|---|---|
+| **Fade-in on load** | Body / page entry | `@keyframes fadeIn { from { opacity:0; translateY(10px) } to { opacity:1; translateY(0) } }` 0.5s ease-out |
+| **Fade-in + scale** | Inventory Setup step transitions | `@keyframes fadeIn { from { opacity:0; scale(0.98) } to { opacity:1; scale(1) } }` 0.3s ease-out |
+| **Hover lift** | Stat cards, district cards | `hover:-translate-y-2` with `transition-all duration-300` |
+| **Icon scale on hover** | Emoji icons in cards | `group-hover:scale-110 transition-transform` |
+| **Shadow amplify on hover** | Cards | `hover:shadow-2xl` |
+| **Border highlight on hover** | District cards, setup cards | `hover:border-blue-200` / `hover:border-[#c00000]` |
+| **Button press** | Submit buttons | `active:scale-95` / `active:scale-[0.98]` |
+| **Sidebar slide** | Mobile toggle | `transition-transform duration-300 ease-in-out` + `-translate-x-full` toggle |
+| **Sidebar overlay** | Backdrop blur | `bg-slate-900/40 backdrop-blur-sm` with opacity transition 0.3s |
+| **Auth button hover** | Login/register | `translateY(-2px)` + `box-shadow: 0 10px 20px -5px rgba(192,0,0,0.3)` + `brightness(1.1)` |
+| **Inner glow on hover** | District card stats area | `group-hover:bg-blue-50/30` / `group-hover:bg-emerald-50/30` |
+
+---
+
+## 🔁 User Flow
+
+```mermaid
+graph TD
+    A["Login Page (/)"] --> B["Dashboard (/dashboard)"]
+    A --> C["Register (/register)"]
+    C --> D["OTP Email Verification"]
+    D --> E["Admin Approves via Email"]
+    E --> A
+    B --> F["Inventory Setup (/inventory-setup)"]
+    F --> G["Step 1: Add or Edit?"]
+    G --> H["Step 2: Schools / Districts / Items"]
+    H --> I["Step 3: Dynamic Form"]
+    I --> B
+    B --> J["Quadrant Pages (sidebar links)"]
+    B --> K["Logout → Login"]
+```
+
+---
+
+## 📁 Files Analyzed
+
+| File | Lines | Role |
+|---|---|---|
+| [dashboard.blade.php](file:///c:/Users/Arween/OneDrive/Documents/DepEd_ZC%20-%20Inventory%20System/DepEd-ZC-Inventory-System-main/resources/views/dashboard.blade.php) | 316 | Main dashboard layout + sidebar + all sections |
+| [inventory-setup.blade.php](file:///c:/Users/Arween/OneDrive/Documents/DepEd_ZC%20-%20Inventory%20System/DepEd-ZC-Inventory-System-main/resources/views/inventory-setup.blade.php) | 237 | Setup wizard (3-step JS-driven flow) |
+| [login.blade.php](file:///c:/Users/Arween/OneDrive/Documents/DepEd_ZC%20-%20Inventory%20System/DepEd-ZC-Inventory-System-main/resources/views/auth/login.blade.php) | 77 | Email-only login |
+| [register.blade.php](file:///c:/Users/Arween/OneDrive/Documents/DepEd_ZC%20-%20Inventory%20System/DepEd-ZC-Inventory-System-main/resources/views/auth/register.blade.php) | 243 | Registration with OTP flow (Alpine.js) |
+| [auth.css](file:///c:/Users/Arween/OneDrive/Documents/DepEd_ZC%20-%20Inventory%20System/DepEd-ZC-Inventory-System-main/public/css/auth.css) | 39 | Auth-page styles, button effects, focus rings |
+| [web.php](file:///c:/Users/Arween/OneDrive/Documents/DepEd_ZC%20-%20Inventory%20System/DepEd-ZC-Inventory-System-main/routes/web.php) | 43 | All route definitions |
+
+---
+
+## Key Design Patterns
+
+- **Ultra-rounded cards** (`rounded-[2.5rem]`+) give a soft, premium feel
+- **Uppercase micro-labels** (`text-[10px] font-black uppercase tracking-widest`) for form labels and section headers
+- **Emoji as icons** (📊🏢✅⚠️📍⚙️🏫📦🔍) — no icon library dependency
+- **Color-coded districts** — blue for LD1, emerald for LD2
+- **Responsive sidebar** — fixed on desktop, slide-in overlay on mobile with backdrop blur
+- **No password login** — email-only auth, matching the approval-based registration flow

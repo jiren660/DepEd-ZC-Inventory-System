@@ -22,7 +22,6 @@
             },
             "require": {
                 "php": "^8.2"
-                //damn
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.2",
